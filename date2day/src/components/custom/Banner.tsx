@@ -43,6 +43,11 @@ const Banner = () => {
                         </NavigationMenuLink>
                     </NavigationMenuItem>
                     <NavigationMenuItem className="text-white">
+                        <NavigationMenuLink href="/form">
+                            Form
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem className="text-white">
                         <NavigationMenuLink href="/" onClick={handleLogout}>
                             Logout
                         </NavigationMenuLink>

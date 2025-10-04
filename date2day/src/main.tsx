@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import App from "./App.tsx";
 import { AuthProvider } from "./auth/AuthContext.tsx";
+import Form from "./pages/Form.tsx";
 import Login from "./pages/Login.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { ProtectedRoute } from "./protectedRoutes/ProtectedRoutes.tsx";
@@ -23,6 +24,14 @@ createRoot(document.getElementById("root")!).render(
                         element={
                             <ProtectedRoute>
                                 <App />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/form"
+                        element={
+                            <ProtectedRoute>
+                                <Form />
                             </ProtectedRoute>
                         }
                     />

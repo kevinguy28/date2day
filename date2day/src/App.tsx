@@ -1,18 +1,21 @@
 import "./App.css";
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import Banner from "./components/custom/Banner";
-import { createRoot } from "react-dom/client";
+
 import {
     APIProvider,
-    Map,
     AdvancedMarker,
+    Map,
     Pin,
     useMap,
 } from "@vis.gl/react-google-maps";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import type { Marker } from "@googlemaps/markerclusterer";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
-// Toronto hotspots
+import Banner from "./components/custom/Banner";
+import { Input } from "./components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import type { Marker } from "@googlemaps/markerclusterer";
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import { createRoot } from "react-dom/client";
+
 type Poi = { key: string; location: google.maps.LatLngLiteral };
 const locations: Poi[] = [
     { key: "cnTower", location: { lat: 43.6426, lng: -79.3871 } },
@@ -42,8 +45,10 @@ const locations: Poi[] = [
     { key: "cn9", location: { lat: 43.6422, lng: -79.3875 } },
     { key: "cn10", location: { lat: 43.6421, lng: -79.3876 } },
 ];
-
 function App() {
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [searchResults, setSearchResults] = useState<Poi[]>([]);
+
     return (
         <>
             <Banner />
@@ -51,10 +56,19 @@ function App() {
                 <h1>Trending</h1>
                 <h1>Restaurant</h1>
                 <h1>Activities</h1>
+
                 <div className="mt-4">
                     <h1>Maps</h1>
+                    <Label htmlFor="placeSearch">Search</Label>
 
                     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_KEY}>
+                        {/* ✅ Input above map, still can access map inside */}
+                        <PlaceSearch
+                            query={searchQuery}
+                            onChange={(val) => setSearchQuery(val)}
+                            onResults={(results) => setSearchResults(results)}
+                        />
+
                         <Map
                             defaultZoom={13}
                             defaultCenter={{ lat: 43.6532, lng: -79.3832 }}
@@ -62,12 +76,77 @@ function App() {
                             mapId={"DEMO"}
                         >
                             <PoiMarkers pois={locations} />
+                            <PoiMarkers pois={searchResults} />
                         </Map>
                     </APIProvider>
                 </div>
             </div>
         </>
     );
+}
+
+const PlaceSearch = ({
+    query,
+    onChange,
+    onResults,
+}: {
+    query: string;
+    onChange: (val: string) => void;
+    onResults: (results: Poi[]) => void;
+}) => {
+    const map = useMap();
+
+    return (
+        <Input
+            id="placeSearch"
+            type="text"
+            className="w-40 text-white mb-2"
+            value={query}
+            onChange={(e) => onChange(e.currentTarget.value)}
+            onKeyDown={async (e) => {
+                if (e.key === "Enter" && map) {
+                    const results = await findPlaces(query, map);
+                    onResults(results); // update markers
+                }
+            }}
+        />
+    );
+};
+
+async function findPlaces(query: string, map: google.maps.Map): Promise<Poi[]> {
+    const { Place } = (await google.maps.importLibrary(
+        "places"
+    )) as google.maps.PlacesLibrary;
+
+    const request: google.maps.places.SearchByTextRequest = {
+        textQuery: query,
+        fields: ["displayName", "location", "businessStatus"],
+        locationBias: map.getCenter()!,
+        maxResultCount: 8,
+        region: "ca",
+    };
+
+    const { places } = await Place.searchByText(request);
+
+    if (places.length) {
+        const results: Poi[] = places
+            .filter((p) => p.location)
+            .map((p, idx) => ({
+                key: `search-${idx}-${p.displayName}`,
+                location: {
+                    lat: p.location!.lat(),
+                    lng: p.location!.lng(),
+                }, // convert LatLng to LatLngLiteral
+            }));
+
+        // Pan to first result
+        if (results[0]?.location) map.panTo(results[0].location);
+
+        return results;
+    } else {
+        console.log("No results for query:", query);
+        return [];
+    }
 }
 
 const PoiMarkers = ({ pois }: { pois: Poi[] }) => {
