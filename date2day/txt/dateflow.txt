@@ -1,0 +1,70 @@
+Place Class Data Fields
+
+    - displayName: Type string
+    - Location: Type LatLng: {lat: X, lng: Y}
+    - id: Type string
+    - openingHours (regularOpeningHours)
+        - Type OpeningHours:
+            - interface OpeningHoursPeriod {
+                open: OpeningHoursPoint;
+                close?: OpeningHoursPoint; // Optional if open 24 hours
+                }
+            - interface OpeningHoursPoint {
+                day: number;     // 0 = Sunday, 1 = Monday, ... 6 = Saturday
+                hour: number;    // 0–23
+                minute: number;  // 0–59
+                date?: Date;     // (optional) if the time applies to a specific date
+                }
+    - svgIconMaskURI: Type string
+
+Route Class Data Fields (Route.computeRoutes() method | google.maps.routes.ComputeRoutesRequest)
+
+    - origin: Type string|LatLng|LatLngLiteral|LatLngAltitudeLiteral|DirectionalLocationLiteral|Place|Waypoint
+    - destination: string|LatLng|LatLngLiteral|LatLngAltitudeLiteral|DirectionalLocationLiteral|Place|Waypoint
+    travelMode (optional)
+        - Type TravelMode (ex// const {TravelMode} = await google.maps.importLibrary("routes")):
+            - BICYLING, DRIVING, TRANSIT, WALKING
+    - path: Type LatLngAltitude[]
+    - region: Type string
+
+    https://developers.google.com/maps/documentation/javascript/routes/routes-js-migration
+
+    Ex// Call the computeRoutes() method to request a route between two locations. The following example shows defining a request and then calling computeRoutes() to get a route.
+
+        // Import the Routes library.
+        const { Route } = await google.maps.importLibrary('routes');
+
+        // Define a computeRoutes request.
+        const request = {
+            origin: 'Mountain View, CA',
+            destination: 'San Francisco, CA',
+            travelMode: 'DRIVING',
+            fields: ['path'], // Request fields needed to draw polylines.
+        };
+
+        // Call the computeRoutes() method to get routes.
+        const {routes} = await Route.computeRoutes(request);
+    
+    Specify a location as a Place object (preferred)
+    To specify a location using a Place, create a new Place instance. The following snippet shows creating new Place instances for origin and destination, and then using them in a ComputeRoutesRequest:
+        
+    // Use Place IDs in a directions request.
+    const originPlaceInstance = new Place({
+    id: 'ChIJiQHsW0m3j4ARm69rRkrUF3w', // Mountain View, CA
+    });
+
+    const destinationPlaceInstance = new Place({
+    id: 'ChIJIQBpAG2ahYAR_6128GcTUEo', // San Francisco, CA
+    });
+
+    const requestWithPlaceIds = {
+    origin: originPlaceInstance,
+    destination: destinationPlaceInstance,
+    fields: ['path'], // Request fields needed to draw polylines.
+    }; 
+
+Date
+
+    - places: Type Place[]
+    - description: Type string
+    
