@@ -31,11 +31,12 @@ import { createRoot } from "react-dom/client";
 
 type Poi = { key: string; location: google.maps.LatLngLiteral };
 
+const searchByText = () => {};
+
 const Form = () => {
     const [locations, setLocations] = useState<Array<google.maps.places.Place>>(
         []
     );
-
     const [location, setLocation] = useState<string>("");
 
     return (
@@ -56,6 +57,7 @@ const Form = () => {
                 <Button
                     type="submit"
                     className="hover:bg-white hover:text-black"
+                    onSubmit={searchByText}
                 >
                     Submit
                 </Button>
