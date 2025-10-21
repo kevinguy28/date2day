@@ -1,0 +1,22 @@
+Place Class Data Fields
+
+    - displayName: Type string
+    - Location: Type LatLng: {lat: X, lng: Y}
+    - id: Type string
+    - openingHours (regularOpeningHours)
+        - Type OpeningHours:
+            - interface OpeningHoursPeriod {
+                open: OpeningHoursPoint;
+                close?: OpeningHoursPoint; // Optional if open 24 hours
+                }
+            - interface OpeningHoursPoint {
+                day: number;     // 0 = Sunday, 1 = Monday, ... 6 = Saturday
+                hour: number;    // 0–23
+                minute: number;  // 0–59
+                date?: Date;     // (optional) if the time applies to a specific date
+                }
+    - svgIconMaskURI: Type string
+
+DateRoute
+
+    - Place

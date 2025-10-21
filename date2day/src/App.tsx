@@ -31,7 +31,29 @@ import { createRoot } from "react-dom/client";
 
 type Poi = { key: string; location: google.maps.LatLngLiteral };
 
-const searchByText = () => {};
+async function searchByText(
+    location: string
+): Promise<google.maps.places.Place[]> {
+    console.log("ruinning");
+    const { Place } = (await google.maps.importLibrary(
+        "places"
+    )) as google.maps.PlacesLibrary;
+
+    const request: google.maps.places.SearchByTextRequest = {
+        textQuery: location,
+        fields: ["displayName", "location"],
+        includedType: "", // Restrict query to a specific type (leave blank for any).
+        useStrictTypeFiltering: true,
+        language: "en-US",
+        maxResultCount: 8,
+        minRating: 1,
+        region: "ca",
+    };
+
+    const { places } = await Place.searchByText(request);
+    console.log(places[0].displayName);
+    return places ?? [];
+}
 
 const Form = () => {
     const [locations, setLocations] = useState<Array<google.maps.places.Place>>(
@@ -57,7 +79,7 @@ const Form = () => {
                 <Button
                     type="submit"
                     className="hover:bg-white hover:text-black"
-                    onSubmit={searchByText}
+                    onClick={() => searchByText(location)}
                 >
                     Submit
                 </Button>
