@@ -23,44 +23,17 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import Banner from "./components/custom/Banner";
 import { Button } from "./components/ui/button";
+import type { DateEventData } from "./types/interface";
 import { Input } from "./components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import type { Marker } from "@googlemaps/markerclusterer";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import PoiMarker from "./helper/Poimarker.tsx";
 import { createRoot } from "react-dom/client";
 
 type Poi = { key: string; location: google.maps.LatLngLiteral };
 
-async function searchByText(
-    location: string
-): Promise<google.maps.places.Place[]> {
-    console.log("ruinning");
-    const { Place } = (await google.maps.importLibrary(
-        "places"
-    )) as google.maps.PlacesLibrary;
-
-    const request: google.maps.places.SearchByTextRequest = {
-        textQuery: location,
-        fields: ["displayName", "location"],
-        includedType: "", // Restrict query to a specific type (leave blank for any).
-        useStrictTypeFiltering: true,
-        language: "en-US",
-        maxResultCount: 8,
-        minRating: 1,
-        region: "ca",
-    };
-
-    const { places } = await Place.searchByText(request);
-    console.log(places[0].displayName);
-    return places ?? [];
-}
-
 const Form = () => {
-    const [locations, setLocations] = useState<Array<google.maps.places.Place>>(
-        []
-    );
-    const [location, setLocation] = useState<string>("");
-
     return (
         <FieldSet className="w-100 p-4 bg-[#0f0f0f] rounded-lg">
             <FieldGroup>
@@ -71,7 +44,6 @@ const Form = () => {
                         id="name"
                         autoComplete="off"
                         placeholder="St. Clair Avenue West"
-                        onChange={(e) => setLocation(e.currentTarget.value)}
                     />
                 </Field>
             </FieldGroup>
@@ -79,7 +51,6 @@ const Form = () => {
                 <Button
                     type="submit"
                     className="hover:bg-white hover:text-black"
-                    onClick={() => searchByText(location)}
                 >
                     Submit
                 </Button>
@@ -92,6 +63,25 @@ const Form = () => {
 };
 
 function App() {
+    const [dates, setDates] = useState<Array<DateEventData>>([]);
+
+    useEffect(() => {
+        const fetchDates = async () => {
+            try {
+                const res = await fetch("http://localhost:3000/api/dates");
+                if (!res.ok) throw new Error("Failed to fetch date events");
+
+                const data = await res.json();
+                console.log(data);
+                setDates(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchDates();
+    }, []);
+
     return (
         <>
             <Banner />
@@ -110,7 +100,9 @@ function App() {
                             defaultCenter={{ lat: 43.6532, lng: -79.3832 }}
                             style={{ width: "100%", height: "400px" }}
                             mapId={"DEMO"}
-                        ></Map>
+                        >
+                            <PoiMarker location={dates} />
+                        </Map>
                     </APIProvider>
                 </div>
             </div>

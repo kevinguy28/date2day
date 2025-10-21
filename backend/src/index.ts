@@ -1,13 +1,26 @@
 import express, { urlencoded } from "express";
+
+import cors from "cors";
+import datesRoute from "../routes/date.route.ts";
 import mongoose from "mongoose";
 import placesRoute from "../routes/place.route.ts";
 
 const app = express();
+
+// app.use(cors());
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+    })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/api/places", placesRoute);
+
+app.use("/api/dates", datesRoute);
 
 app.get("/", (req, res) => {
     res.send("Hello from NODE APi!!!!!!!!");

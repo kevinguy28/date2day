@@ -1,5 +1,6 @@
-import Place from "../models/place.model.ts";
 import type { Request, Response } from "express";
+
+import Place from "../models/place.model.ts";
 
 export const getPlaces = async (req: Request, res: Response) => {
     try {

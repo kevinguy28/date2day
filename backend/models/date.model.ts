@@ -12,8 +12,6 @@ const DateSchema = new mongoose.Schema(
                 ref: "Place",
             },
         ],
-
-        date: { type: Date, required: true },
     },
     { timestamps: true }
 );
