@@ -15,14 +15,11 @@ interface PoiMarkerProps {
     location: DateEventData[];
 }
 
+const StartMarker = () => {
+    return <></>;
+};
+
 const PoiMarker: React.FC<PoiMarkerProps> = ({ location }) => {
-    location.map((data: DateEventData) => {
-        console.log(data.places[1]);
-        console.log("XXXX");
-    });
-
-    const handleClick = async () => {};
-
     return (
         <>
             {location.map((ded: DateEventData) => (

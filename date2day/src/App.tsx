@@ -28,7 +28,7 @@ import { Input } from "./components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import type { Marker } from "@googlemaps/markerclusterer";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import PoiMarker from "./helper/Poimarker.tsx";
+import DateStartMarker from "./helper/DateStartMarker";
 import { createRoot } from "react-dom/client";
 
 type Poi = { key: string; location: google.maps.LatLngLiteral };
@@ -101,7 +101,14 @@ function App() {
                             style={{ width: "100%", height: "400px" }}
                             mapId={"DEMO"}
                         >
-                            <PoiMarker location={dates} />
+                            {dates &&
+                                dates.map((date, index) => (
+                                    <DateStartMarker
+                                        key={index}
+                                        id={date._id}
+                                        places={date.places}
+                                    ></DateStartMarker>
+                                ))}
                         </Map>
                     </APIProvider>
                 </div>
