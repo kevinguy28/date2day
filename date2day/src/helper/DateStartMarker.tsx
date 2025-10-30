@@ -1,6 +1,8 @@
-import React from "react";
-import type { PlaceData } from "@/types/interface";
+import React, { useEffect, useState } from "react";
+
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
+import type { PlaceData } from "@/types/interface";
+import type { SetStateAction } from "react";
 
 interface DateObjProps {
     id: string;
@@ -19,7 +21,7 @@ const DateRestPlaces: React.FC<DateRestPlacesProp> = ({
     isActive,
 }) => {
     return (
-        <>
+        <div>
             {isActive &&
                 restPlaces.map((place, index) => (
                     <AdvancedMarker
@@ -28,12 +30,14 @@ const DateRestPlaces: React.FC<DateRestPlacesProp> = ({
                         data-refDateObj={id}
                     />
                 ))}
-        </>
+        </div>
     );
 };
 
 const DateStartMarker: React.FC<DateObjProps> = ({ id, places }) => {
     const [firstPlace, ...restPlaces] = places;
+    const [active, setActive] = useState<boolean>(false);
+    const [activeDate, setActiveDate] = useState<[]>([]);
 
     return (
         <>
@@ -41,11 +45,12 @@ const DateStartMarker: React.FC<DateObjProps> = ({ id, places }) => {
                 position={firstPlace.location}
                 key={firstPlace.id}
                 data-refDateObj={id}
+                onClick={() => setActive(!active)}
             ></AdvancedMarker>
             <DateRestPlaces
                 id={id}
                 restPlaces={restPlaces}
-                isActive={true}
+                isActive={active}
             ></DateRestPlaces>
         </>
     );
