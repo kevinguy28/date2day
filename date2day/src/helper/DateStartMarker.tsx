@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
-import type { PlaceData } from "@/types/interface";
+import type { PlaceData, DateEventData } from "@/types/interface";
 import type { SetStateAction } from "react";
 
 interface DateObjProps {
@@ -15,43 +15,61 @@ interface DateRestPlacesProp {
     isActive: boolean;
 }
 
-const DateRestPlaces: React.FC<DateRestPlacesProp> = ({
-    id,
-    restPlaces,
-    isActive,
-}) => {
+interface DatesArrayProp {
+    dates: DateEventData[];
+}
+
+const StartingLocation: React.FC<{
+    dateLocation: PlaceData;
+    onClick: () => void;
+    hide: boolean;
+}> = ({ dateLocation, onClick, hide }) => {
     return (
-        <div>
-            {isActive &&
-                restPlaces.map((place, index) => (
-                    <AdvancedMarker
-                        key={`${place.id}-${index}`}
-                        position={place.location}
-                        data-refDateObj={id}
-                    />
-                ))}
-        </div>
+        <>
+            {!hide && (
+                <AdvancedMarker
+                    position={dateLocation.location}
+                    onClick={onClick}
+                />
+            )}
+        </>
     );
 };
 
-const DateStartMarker: React.FC<DateObjProps> = ({ id, places }) => {
-    const [firstPlace, ...restPlaces] = places;
-    const [active, setActive] = useState<boolean>(false);
-    const [activeDate, setActiveDate] = useState<[]>([]);
+const RestOfLocation: React.FC<{
+    dateLocations: PlaceData[];
+}> = ({ dateLocations }) => {
+    return (
+        <>
+            {dateLocations.map((date) => (
+                <AdvancedMarker key={date.id} position={date.location} />
+            ))}
+        </>
+    );
+};
+
+const DateStartMarker: React.FC<DatesArrayProp> = ({ dates }) => {
+    const [dateId, setDateId] = useState<string>("");
+
+    const handleClick = (id: string) => {
+        setDateId((prevId) => (prevId === id ? "" : id));
+    };
 
     return (
         <>
-            <AdvancedMarker
-                position={firstPlace.location}
-                key={firstPlace.id}
-                data-refDateObj={id}
-                onClick={() => setActive(!active)}
-            ></AdvancedMarker>
-            <DateRestPlaces
-                id={id}
-                restPlaces={restPlaces}
-                isActive={active}
-            ></DateRestPlaces>
+            {dates.map((date) => (
+                <React.Fragment key={date._id}>
+                    <StartingLocation
+                        dateLocation={date.places[0]}
+                        onClick={() => handleClick(date._id)}
+                        hide={dateId !== "" && dateId !== date._id}
+                    />
+
+                    {date._id === dateId && (
+                        <RestOfLocation dateLocations={date.places.slice(1)} />
+                    )}
+                </React.Fragment>
+            ))}
         </>
     );
 };
