@@ -102,14 +102,7 @@ function App() {
                             style={{ width: "100%", height: "400px" }}
                             mapId={"DEMO"}
                         >
-                            {dates &&
-                                dates.map((date, index) => (
-                                    <DateStartMarker
-                                        key={index}
-                                        id={date._id}
-                                        places={date.places}
-                                    ></DateStartMarker>
-                                ))}
+                            <DateStartMarker dates={dates}></DateStartMarker>
                         </Map>
                     </APIProvider>
                 </div>
