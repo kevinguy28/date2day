@@ -24,11 +24,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Banner from "./components/custom/Banner";
 import { Button } from "./components/ui/button";
 import type { DateEventData } from "./types/interface";
+import DateStartMarker from "./helper/DateStartMarker";
+import Form2 from "./pages/Form";
 import { Input } from "./components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import type { Marker } from "@googlemaps/markerclusterer";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import DateStartMarker from "./helper/DateStartMarker";
 import { createRoot } from "react-dom/client";
 
 type Poi = { key: string; location: google.maps.LatLngLiteral };
@@ -113,6 +114,7 @@ function App() {
                     </APIProvider>
                 </div>
             </div>
+            <Form2 />
         </>
     );
 }
