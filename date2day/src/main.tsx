@@ -11,6 +11,7 @@ import { ProtectedRoute } from "./protectedRoutes/ProtectedRoutes.tsx";
 import Signup from "./pages/Signup.tsx";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import CreateDate from "./pages/CreateDate.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -28,10 +29,10 @@ createRoot(document.getElementById("root")!).render(
                         }
                     />
                     <Route
-                        path="/form"
+                        path="/dateform"
                         element={
                             <ProtectedRoute>
-                                <Form />
+                                <CreateDate />
                             </ProtectedRoute>
                         }
                     />

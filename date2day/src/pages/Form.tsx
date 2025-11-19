@@ -9,6 +9,8 @@ import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
+import { postPlace } from "@/api/places/places";
 
 const Form = () => {
     const [textQuery, setTextQuery] = useState<string>("");
@@ -34,7 +36,7 @@ const Form = () => {
                     "Content-Type": "application/json",
                     "X-Goog-Api-Key": API_KEY,
                     "X-Goog-FieldMask":
-                        "places.id,places.displayName,places.formattedAddress",
+                        "places.id,places.displayName,places.formattedAddress,places.location,",
                 },
                 body: JSON.stringify({
                     textQuery: query,
@@ -54,6 +56,17 @@ const Form = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const submitPlace = async (
+        placeId: string,
+        displayName: string,
+        location: {
+            latitude: number;
+            longitude: number;
+        }
+    ) => {
+        postPlace(placeId, displayName, location);
     };
 
     // ---- Handle form submission ----
@@ -113,6 +126,18 @@ const Form = () => {
                                 <p className="text-gray-400 text-sm">
                                     {place.formattedAddress}
                                 </p>
+                                <div
+                                    className="p-2 bg-black mt-2"
+                                    onClick={() =>
+                                        submitPlace(
+                                            place.id,
+                                            place.displayName.text,
+                                            place.location
+                                        )
+                                    }
+                                >
+                                    Add to date
+                                </div>
                             </li>
                         ))}
                     </ul>

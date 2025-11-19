@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
 import type { PlaceData, DateEventData } from "@/types/interface";
-import type { SetStateAction } from "react";
 
 interface DateObjProps {
     id: string;

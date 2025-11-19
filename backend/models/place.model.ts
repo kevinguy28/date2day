@@ -18,6 +18,12 @@ const PlaceSchema = new mongoose.Schema(
                 required: true,
             },
         },
+
+        placeId: {
+            type: String,
+            required: [true, "Please enter google place id"],
+            unique: true,
+        },
     },
     { timestamps: true }
 );

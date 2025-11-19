@@ -23,10 +23,15 @@ export const getPlacesId = async (req: Request, res: Response) => {
         console.log("Error: " + error);
     }
 };
+
 export const postPlaces = async (req: Request, res: Response) => {
     try {
         console.log("hello");
-        const place = await Place.create(req.body);
+        const place = await Place.create({
+            displayName: req.body.displayName,
+            location: req.body.location,
+            placeId: req.body.placeId, // <-- pull from frontend
+        });
         res.status(200).json(place);
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });
